@@ -273,11 +273,11 @@ async function repairGame(): Promise<void> {
       <div>
         <!-- Right column -->
         <div className="seat-list">
-          <div v-for="(player, idx) in players" :key="idx">
+          <div v-for="idx in [0, 1]" :key="idx">
             <SeatComponent
               :user_id="user?.id"
               :admin_mode="adminMode"
-              :occupant="player"
+              :occupant="players?.[idx] || null"
               :player_n="idx"
               @sit="sit(idx)"
               @leave="leave(idx)"

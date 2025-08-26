@@ -201,6 +201,21 @@ router.put("/users/:userId/role", checkCSRFToken, async (req, res) => {
   }
 });
 
+// Get current user (me)
+router.get("/users/me", async (req, res) => {
+  try {
+    if (!req.user) {
+      res.status(401);
+      res.json("Not authenticated");
+      return;
+    }
+    res.send(req.user);
+  } catch (e) {
+    res.status(500);
+    res.json(e.message);
+  }
+});
+
 router.get("/users/:userId", async (req, res) => {
   try {
     const user = await getUser(req.params.userId);

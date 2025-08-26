@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import http from "http";
+import cors from "cors";
 import {
   authenticateUser,
   createUserWithSessionId,
@@ -87,6 +88,15 @@ passport.deserializeUser<string>(function (id, callback) {
 
 // initialize Express
 const app = express();
+
+// Add CORS middleware
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    credentials: true,
+  }),
+);
+
 app.use(
   bodyParser.urlencoded({
     extended: true,

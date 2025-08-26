@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UserResponse, UserRole } from "@ogfcommunity/variants-shared";
 import { ref, watchEffect } from "vue";
+import { getVariantList } from "@ogfcommunity/variants-shared";
 import * as requests from "../requests";
 import { useCurrentUser } from "@/stores/user";
 import Swal from "sweetalert2";
@@ -32,22 +33,8 @@ function formatRating(rating: number, rd: number, vol: number) {
   return `${Math.round(rating)} ± ${Math.round(rd)} (vol: ${vol.toFixed(4)})`;
 }
 
-// Get all supported variants list
-const supportedVariants = [
-  "baduk",
-  "phantom",
-  "capture",
-  "tetris",
-  "pyramid",
-  "thue-morse",
-  "freeze",
-  "fractional",
-  "keima",
-  "one color",
-  "drift",
-  "quantum",
-  "sfractional",
-];
+// Get all supported variants dynamically from shared library
+const supportedVariants = getVariantList();
 
 async function launchDeleteUserDialog() {
   if (!user.value) {

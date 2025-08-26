@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
+import { getVariantList } from "@ogfcommunity/variants-shared";
 import * as requests from "../requests";
 
 interface LeaderboardEntry {
@@ -14,38 +15,28 @@ const leaderboard = ref<LeaderboardEntry[]>([]);
 const loading = ref(false);
 const error = ref<string>();
 
-// Supported variants list
-const supportedVariants = [
-  "baduk",
-  "phantom",
-  "capture",
-  "tetris",
-  "pyramid",
-  "thue-morse",
-  "freeze",
-  "fractional",
-  "keima",
-  "one color",
-  "drift",
-  "quantum",
-  "sfractional",
-];
+// Get supported variants dynamically from shared library
+const supportedVariants = getVariantList();
 
 // Variant display name mapping
 const variantDisplayNames: Record<string, string> = {
   baduk: "Baduk",
-  phantom: "Phantom Baduk",
-  capture: "Capture Baduk",
-  tetris: "Tetris Baduk",
-  pyramid: "Pyramid Baduk",
-  "thue-morse": "Thue-Morse Baduk",
-  freeze: "Freeze Baduk",
-  fractional: "Fractional Baduk",
-  keima: "Keima Baduk",
-  "one color": "One Color Baduk",
-  drift: "Drift Baduk",
-  quantum: "Quantum Baduk",
-  sfractional: "Sequential Fractional Baduk",
+  phantom: "Phantom",
+  parallel: "Parallel",
+  capture: "Capture",
+  chess: "Chess",
+  tetris: "Tetris",
+  pyramid: "Pyramid",
+  "thue-morse": "Thue-Morse",
+  freeze: "Freeze",
+  fractional: "Fractional",
+  keima: "Keima",
+  "one color": "One Color",
+  drift: "Drift",
+  quantum: "Quantum",
+  sfractional: "Sequential Fractional",
+  lighthouse: "Lighthouse",
+  "super tic-tac-go": "Super Tic-Tac-Go",
 };
 
 // Fetch leaderboard data

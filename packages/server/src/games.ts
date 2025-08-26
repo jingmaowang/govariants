@@ -22,6 +22,7 @@ import {
   ValidateTimeControlConfig,
 } from "./time-control/time-control";
 import { updateRatings, supportsRatings } from "./rating/rating";
+import { getUser } from "./users";
 
 export type GameSchema = {
   variant: string;
@@ -108,6 +109,7 @@ export async function createGame(
     variant: variant,
     moves: [] as MovesType[],
     config: config,
+    players: [] as User[], // Initialize empty players array
     time_control: GetInitialTimeControl(variant, config),
   };
 
@@ -288,8 +290,18 @@ async function updateSeat(
   return game.players;
 }
 
-export function takeSeat(game_id: string, seat: number, user: UserResponse) {
-  return updateSeat(game_id, seat, user, user);
+export async function takeSeat(
+  game_id: string,
+  seat: number,
+  user: UserResponse,
+) {
+  // Get complete user data including ranking
+  const completeUser = await getUser(user.id);
+  if (!completeUser) {
+    throw new Error("User not found");
+  }
+
+  return updateSeat(game_id, seat, user, completeUser);
 }
 
 export async function leaveSeat(
