@@ -25,14 +25,31 @@ defineEmits<{
   (event: "sit"): void;
   (event: "leave"): void;
 }>();
+
 const hasLeaveCallback = computed(
   // https://stackoverflow.com/a/76208995/5001502
   () => !!getCurrentInstance()?.vnode.props?.onLeave,
 );
+
 const time_config = computed(
   () => (props.config as IConfigWithTimeControl).time_control,
 );
+
 const isSelected = computed(() => props.selected === props.player_n);
+
+// Calculate current variant rating
+const currentVariantRating = computed(() => {
+  if (!props.occupant?.ranking || !props.variant) return null;
+  return props.occupant.ranking[props.variant];
+});
+
+// Format rating display
+const formatRating = computed(() => {
+  if (!currentVariantRating.value) return "Unrated";
+  return `${Math.round(currentVariantRating.value.rating)} ± ${Math.round(
+    currentVariantRating.value.rd,
+  )}`;
+});
 </script>
 
 <template>
@@ -57,6 +74,10 @@ const isSelected = computed(() => props.selected === props.player_n);
     <div v-else>
       <p class="seat-username">
         {{ occupant.username ?? `guest (...${occupant.id.slice(-6)})` }}
+      </p>
+      <!-- Display rating -->
+      <p v-if="currentVariantRating" class="seat-rating">
+        Rating: {{ formatRating }}
       </p>
       <div class="timer-and-button">
         <GameTimer
@@ -130,6 +151,13 @@ const isSelected = computed(() => props.selected === props.player_n);
 
 .seat.to-move .seat-username {
   font-weight: bold;
+}
+
+.seat-rating {
+  font-size: 0.9em;
+  color: #666;
+  margin: 2px 0;
+  font-style: italic;
 }
 
 .timer-and-button {

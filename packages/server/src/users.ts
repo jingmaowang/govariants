@@ -207,6 +207,39 @@ export function deleteUser(user_id: string) {
     .catch(console.error);
 }
 
+// New: Get leaderboard function
+export async function getLeaderboard(
+  variant: string,
+): Promise<
+  Array<{ username?: string; rating: number; rd: number; vol: number }>
+> {
+  const users = await usersCollection()
+    .find({
+      [`ranking.${variant}`]: { $exists: true },
+    })
+    .toArray();
+
+  const leaderboard = users
+    .map((user) => {
+      const ranking = user.ranking?.[variant];
+      if (!ranking) return null;
+
+      return {
+        username:
+          user.login_type === "persistent"
+            ? user.username
+            : `guest (...${user._id.toString().slice(-6)})`,
+        rating: ranking.rating,
+        rd: ranking.rd,
+        vol: ranking.vol,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.rating - a.rating); // Sort by rating in descending order
+
+  return leaderboard;
+}
+
 export function checkUsername(username: string): void {
   if (!/^.{4,20}$/.test(username)) {
     throw "Username must be between 4 and 20 characters long.";

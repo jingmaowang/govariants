@@ -18,6 +18,7 @@ import {
   getUser,
   getUserByName,
   setUserRole,
+  getLeaderboard,
 } from "./users";
 import {
   getOnlyMove,
@@ -208,6 +209,24 @@ router.get("/users/:userId", async (req, res) => {
       res.json("User does not exist");
     }
     res.send(user);
+  } catch (e) {
+    res.status(500);
+    res.json(e.message);
+  }
+});
+
+// New: Get leaderboard API
+router.get("/leaderboard", async (req, res) => {
+  try {
+    const variant = req.query.variant?.toString();
+    if (!variant) {
+      res.status(400);
+      res.json("Variant parameter is required");
+      return;
+    }
+
+    const leaderboard = await getLeaderboard(variant);
+    res.send(leaderboard);
   } catch (e) {
     res.status(500);
     res.json(e.message);
